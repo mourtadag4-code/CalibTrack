@@ -1,6 +1,5 @@
 from datetime import datetime, date
 from flask import Flask, render_template, request, redirect, url_for, flash
-from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 
 load_dotenv()
