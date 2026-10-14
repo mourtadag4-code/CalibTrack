@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h4>{% if product %}Modifier{% else %}Ajouter{% endif %} un produit</h4>
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">ID / Référence</label>
+          <input name="code" class="form-control" required
+                 value="{{ product.code if product else '' }}">
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Nom</label>
+          <input name="name" class="form-control" required
+                 value="{{ product.name if product else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Zone</label>
+          <input name="zone" class="form-control" required
+                 value="{{ product.zone if product else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Dernière calibration</label>
+          <input type="date" name="last_calibration" class="form-control" required
+                 value="{{ product.last_calibration if product else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Prochaine calibration</label>
+          <input type="date" name="next_calibration" class="form-control" required
+                 value="{{ product.next_calibration if product else '' }}">
+        </div>
+      </div>
+      <div class="mt-4">
+        <button class="btn btn-primary">Enregistrer</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

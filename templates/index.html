@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="row g-2 mb-3">
+  <div class="col-auto flex-grow-1">
+    <input type="text" name="q" value="{{ request.args.get('q','') }}"
+           class="form-control" placeholder="Rechercher (ID, nom, zone)...">
+  </div>
+  <div class="col-auto"><button class="btn btn-outline-secondary">Rechercher</button></div>
+</form>
+
+<div class="card shadow-sm">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th><th>Nom</th><th>Zone</th>
+        <th>Dernière calib.</th><th>Prochaine calib.</th><th>État</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for p in products %}
+      <tr>
+        <td><code>{{ p.code }}</code></td>
+        <td>{{ p.name }}</td>
+        <td><span class="badge bg-secondary">{{ p.zone }}</span></td>
+        <td>{{ p.last_calibration.strftime('%d/%m/%Y') }}</td>
+        <td>{{ p.next_calibration.strftime('%d/%m/%Y') }}</td>
+        <td>
+          {% set d = p.days_left() %}
+          <span class="badge bg-{{ p.status() }}">
+            {% if d < 0 %}Dépassé de {{ -d }} j
+            {% elif d == 0 %}Aujourd'hui
+            {% else %}Dans {{ d }} j{% endif %}
+          </span>
+        </td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('edit_product', pid=p.id) }}">✏️</a>
+          <form method="post" action="{{ url_for('delete_product', pid=p.id) }}"
+                style="display:inline"
+                onsubmit="return confirm('Supprimer ce produit ?');">
+            <button class="btn btn-sm btn-outline-danger">🗑️</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="text-center text-muted py-4">
+        Aucun produit enregistré.
+      </td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

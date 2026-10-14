@@ -1,0 +1,32 @@
+# Environnement virtuel
+venv/
+.venv/
+env/
+
+# Secrets et config locale
+.env
+
+# Base de données (contient tes données, ne pas versionner)
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
