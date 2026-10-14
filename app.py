@@ -32,6 +32,13 @@ def create_app():
         products = query.order_by(Product.next_calibration.asc()).all()
         return render_template("index.html", products=products, today=date.today())
 
+    @app.route("/run-calibration-check-now")
+    def run_calibration_check():
+        """Endpoint secret pour déclencher manuellement la vérification des calibrations."""
+        # Exécute la fonction de vérification
+        check_calibrations(app)
+        return "Vérification des calibrations lancée avec succès.", 200
+
     @app.route("/products/new", methods=["GET", "POST"])
     def create_product():
         if request.method == "POST":
