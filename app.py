@@ -104,13 +104,7 @@ def create_app():
                    Config.ALERT_RECIPIENTS)
         print("Email de test envoyé à", Config.ALERT_RECIPIENTS)
 
-    # ---------- Scheduler ----------
-    if not app.debug or __name__ == "__main__":
-        scheduler = BackgroundScheduler()
-        # Tous les jours à 8h00
-        scheduler.add_job(lambda: check_calibrations(app),
-                          "cron", hour=8, minute=0, id="calib_check")
-        scheduler.start()
+    
 
     return app
 
