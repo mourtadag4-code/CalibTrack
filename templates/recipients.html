@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <h4>📧 Destinataires des alertes</h4>
+        <p class="text-muted">
+          Ces adresses reçoivent les alertes de calibration.
+          {% if not recipients %}
+          <br><em>Aucun destinataire en base. Le système utilise actuellement
+          la liste de secours du fichier <code>.env</code> :
+          <code>{{ fallback|join(', ') }}</code></em>
+          {% endif %}
+        </p>
+
+        <form method="post" action="{{ url_for('add_recipient') }}" class="row g-2 mb-3">
+          <div class="col-md-5">
+            <input type="email" name="email" class="form-control"
+                   placeholder="email@exemple.com" required>
+          </div>
+          <div class="col-md-5">
+            <input type="text" name="name" class="form-control"
+                   placeholder="Nom (optionnel)">
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-success w-100">Ajouter</button>
+          </div>
+        </form>
+
+        <table class="table table-sm align-middle">
+          <thead class="table-light">
+            <tr><th>Email</th><th>Nom</th><th></th></tr>
+          </thead>
+          <tbody>
+          {% for r in recipients %}
+            <tr>
+              <td>{{ r.email }}</td>
+              <td>{{ r.name or '—' }}</td>
+              <td class="text-end">
+                <form method="post" action="{{ url_for('delete_recipient', rid=r.id) }}"
+                      onsubmit="return confirm('Supprimer {{ r.email }} ?');"
+                      style="display:inline">
+                  <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="3" class="text-muted text-center py-3">
+              Aucun destinataire en base.
+            </td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <form method="post" action="{{ url_for('test_email_route') }}">
+          <button class="btn btn-outline-primary btn-sm">
+            ✉️ Envoyer un email de test à la liste actuelle
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

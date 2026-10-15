@@ -10,7 +10,14 @@
 <nav class="navbar navbar-dark bg-dark mb-4">
   <div class="container">
     <a class="navbar-brand" href="{{ url_for('index') }}">🧪 Suivi Calibration</a>
-    <a class="btn btn-success btn-sm" href="{{ url_for('create_product') }}">+ Nouveau produit</a>
+    <div>
+      <a class="btn btn-outline-light btn-sm" href="{{ url_for('recipients_list') }}">
+        📧 Destinataires
+      </a>
+      <a class="btn btn-success btn-sm" href="{{ url_for('create_product') }}">
+        + Nouveau produit
+      </a>
+    </div>
   </div>
 </nav>
 <div class="container pb-5">

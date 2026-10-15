@@ -1,6 +1,8 @@
 from datetime import datetime, date
 from flask import Flask, render_template, request, redirect, url_for, flash
 from dotenv import load_dotenv
+from models import Recipient
+from scheduler import check_calibrations, get_alert_recipients
 
 load_dotenv()
 
@@ -95,6 +97,55 @@ def create_app():
         db.session.commit()
         flash("Produit supprimé.", "success")
         return redirect(url_for("index"))
+
+    # ---------- Gestion des destinataires ----------
+
+    @app.route("/recipients")
+    def recipients_list():
+        recipients = Recipient.query.order_by(Recipient.email).all()
+        fallback = Config.ALERT_RECIPIENTS if not recipients else None
+        return render_template("recipients.html", recipients=recipients, fallback=fallback)
+
+    @app.route("/recipients/add", methods=["POST"])
+    def add_recipient():
+        email = request.form.get("email", "").strip().lower()
+        name = request.form.get("name", "").strip()
+        if not email or "@" not in email:
+            flash("Adresse email invalide.", "danger")
+            return redirect(url_for("recipients_list"))
+        if Recipient.query.filter_by(email=email).first():
+            flash(f"{email} est déjà dans la liste.", "warning")
+            return redirect(url_for("recipients_list"))
+        db.session.add(Recipient(email=email, name=name or None))
+        db.session.commit()
+        flash(f"{email} ajouté.", "success")
+        return redirect(url_for("recipients_list"))
+
+    @app.route("/recipients/<int:rid>/delete", methods=["POST"])
+    def delete_recipient(rid):
+        r = Recipient.query.get_or_404(rid)
+        db.session.delete(r)
+        db.session.commit()
+        flash(f"{r.email} supprimé.", "success")
+        return redirect(url_for("recipients_list"))
+
+    @app.route("/recipients/test-email", methods=["POST"])
+    def test_email_route():
+        from scheduler import get_alert_recipients
+        recipients = get_alert_recipients()
+        if not recipients:
+            flash("Aucun destinataire configuré.", "danger")
+            return redirect(url_for("recipients_list"))
+        try:
+            send_email(
+                "Test calibration",
+                "<p>Ceci est un email de test envoyé depuis CalibTrack.</p>",
+                recipients,
+            )
+            flash(f"Email de test envoyé à : {', '.join(recipients)}", "success")
+        except Exception as e:
+            flash(f"Erreur d'envoi : {e}", "danger")
+        return redirect(url_for("recipients_list"))
 
     # ---------- Commandes CLI ----------
     @app.cli.command("check-calibrations")

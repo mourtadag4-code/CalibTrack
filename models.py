@@ -1,5 +1,5 @@
-from datetime import date
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -28,3 +28,11 @@ class Product(db.Model):
         if d <= 30:
             return "warning"
         return "success"
+
+class Recipient(db.Model):
+    __tablename__ = "recipients"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(200), unique=True, nullable=False)
+    name = db.Column(db.String(200), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)

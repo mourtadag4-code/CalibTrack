@@ -3,6 +3,14 @@ from models import db, Product
 from mailer import send_email
 from config import Config
 
+def get_alert_recipients():
+    """Récupère les destinataires depuis la DB. Fallback sur .env si vide."""
+    from models import Recipient
+    emails = [r.email for r in Recipient.query.order_by(Recipient.email).all()]
+    if emails:
+        return emails
+    return Config.ALERT_RECIPIENTS
+
 def check_calibrations(app):
     """Parcourt les produits et envoie un mail pour ceux dont la prochaine
     calibration arrive dans moins de ALERT_DAYS_BEFORE jours."""
@@ -55,7 +63,7 @@ def check_calibrations(app):
         send_email(
             subject=f"[Calibration] {len(to_alert)} produit(s) à recalibrer",
             html_body=html,
-            recipients=Config.ALERT_RECIPIENTS,
+            recipients=get_alert_recipients(),
         )
 
         # Marquer comme envoyé pour ne pas spammer
