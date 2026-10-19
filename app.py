@@ -128,38 +128,25 @@ def create_app():
         db.session.commit()
         flash(f"{r.email} supprimé.", "success")
         return redirect(url_for("recipients_list"))
-
-    @app.route("/recipients/test-email", methods=["POST"])
-    def test_email_route():
-        from scheduler import get_alert_recipients
-        recipients = get_alert_recipients()
-        if not recipients:
-            flash("Aucun destinataire configuré.", "danger")
-            return redirect(url_for("recipients_list"))
+    
+    @app.route("/recipients/send-alerts", methods=["POST"])
+    def send_alerts_route():
         try:
-            send_email(
-                "Test calibration",
-                "<p>Ceci est un email de test envoyé depuis CalibTrack.</p>",
-                recipients,
-            )
-            flash(f"Email de test envoyé à : {', '.join(recipients)}", "success")
+            sent, msg = check_calibrations(app)
+            if sent > 0:
+                flash(msg, "success")
+            else:
+                flash(msg, "info")
         except Exception as e:
-            flash(f"Erreur d'envoi : {e}", "danger")
+            flash(f"Erreur lors de l'envoi : {e}", "danger")
         return redirect(url_for("recipients_list"))
 
     # ---------- Commandes CLI ----------
     @app.cli.command("check-calibrations")
     def check_cmd():
         """Lance la vérification manuellement : flask check-calibrations"""
-        check_calibrations(app)
-
-    @app.cli.command("test-email")
-    def test_email_cmd():
-        """Envoie un email de test : flask test-email"""
-        send_email("Test calibration",
-                   "<p>Ceci est un test.</p>",
-                   Config.ALERT_RECIPIENTS)
-        print("Email de test envoyé à", Config.ALERT_RECIPIENTS)
+        sent, msg = check_calibrations(app)
+        print(f"[scheduler] {msg}")
 
     
 

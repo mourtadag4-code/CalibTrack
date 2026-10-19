@@ -53,10 +53,15 @@
           </tbody>
         </table>
 
-        <form method="post" action="{{ url_for('test_email_route') }}">
-          <button class="btn btn-outline-primary btn-sm">
-            ✉️ Envoyer un email de test à la liste actuelle
+        <form method="post" action="{{ url_for('send_alerts_route') }}"
+              onsubmit="return confirm('Envoyer les alertes réelles aux destinataires pour les produits arrivant à échéance ?');">
+          <button class="btn btn-warning btn-sm text-dark fw-bold">
+            🚀 Déclencher les alertes maintenant
           </button>
+          <small class="text-muted d-block mt-2">
+            Envoie de vrais emails pour les produits dont la date de calibration 
+            arrive dans moins de <strong>{{ config.ALERT_DAYS_BEFORE }} jours</strong>.
+          </small>
         </form>
       </div>
     </div>
