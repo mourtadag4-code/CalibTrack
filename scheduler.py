@@ -70,6 +70,7 @@ def check_calibrations(app):
 
         sent_count = 0
         for p in to_alert:
+            ok = 0
             for email, name in recipients:
                 body = _build_alert_text(name, p)
                 try:
@@ -79,11 +80,13 @@ def check_calibrations(app):
                         recipients=[email],
                     )
                     sent_count += 1
+                    ok += 1
                 except Exception as e:
                     print(f"[scheduler] Échec envoi à {email} : {e}")
-            
-            # Marquer le produit comme notifié pour cette date
-            p.alert_sent_for = p.next_calibration
+
+            # Marquer comme notifié seulement si au moins un email est parti
+            if ok:
+                p.alert_sent_for = p.next_calibration
 
         db.session.commit()
         return sent_count, f"{sent_count} email(s) envoyé(s) avec succès."
