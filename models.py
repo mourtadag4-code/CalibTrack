@@ -32,6 +32,16 @@ class Product(db.Model):
         }
         return colors.get(self.status, "secondary")
 
+    def urgency_color(self):
+        d = self.days_left()
+        if d < 0:
+            return "danger"      # dépassé
+        if d <= 7:
+            return "danger"
+        if d <= 30:
+            return "warning"
+        return "success"
+
 
 class Recipient(db.Model):
     __tablename__ = "recipients"
