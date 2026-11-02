@@ -31,6 +31,15 @@
                  value="{{ product.next_calibration if product else '' }}">
         </div>
       </div>
+      <div class="col-md-4">
+        <label class="form-label">Statut</label>
+        <select name="status" class="form-select">
+          <option value="NON FAIT" {% if product and product.status == 'NON FAIT' %}selected{% endif %}>NON FAIT</option>
+          <option value="EN COURS" {% if product and product.status == 'EN COURS' %}selected{% endif %}>EN COURS</option>
+          <option value="À CALIBRER" {% if product and product.status == 'À CALIBRER' %}selected{% endif %}>À CALIBRER</option>
+          <option value="FAIT" {% if product and product.status == 'FAIT' %}selected{% endif %}>FAIT</option>
+        </select>
+      </div>
       <div class="mt-4">
         <button class="btn btn-primary">Enregistrer</button>
         <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Annuler</a>

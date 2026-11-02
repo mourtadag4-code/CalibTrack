@@ -49,6 +49,7 @@ def create_app():
                     code=request.form["code"].strip(),
                     name=request.form["name"].strip(),
                     zone=request.form["zone"].strip(),
+                    status=request.form.get("status", "NON FAIT"),
                     last_calibration=datetime.strptime(
                         request.form["last_calibration"], "%Y-%m-%d").date(),
                     next_calibration=datetime.strptime(
@@ -76,6 +77,11 @@ def create_app():
     def edit_product(pid):
         p = Product.query.get_or_404(pid)
         if request.method == "POST":
+            p.code = request.form["code"].strip()
+            p.name = request.form["name"].strip()
+            p.zone = request.form["zone"].strip()
+            p.status = request.form.get("status", p.status)
+            # ... le reste
             p.code = request.form["code"].strip()
             p.name = request.form["name"].strip()
             p.zone = request.form["zone"].strip()

@@ -13,6 +13,7 @@
     <thead class="table-light">
       <tr>
         <th>ID</th><th>Nom</th><th>Zone</th>
+        <th>Statut</th> <!-- Nouvelle colonne -->
         <th>Dernière calib.</th><th>Prochaine calib.</th><th>État</th><th></th>
       </tr>
     </thead>
@@ -22,6 +23,9 @@
         <td><code>{{ p.code }}</code></td>
         <td>{{ p.name }}</td>
         <td><span class="badge bg-secondary">{{ p.zone }}</span></td>
+        <td>
+          <span class="badge bg-{{ p.status_color() }}">{{ p.status }}</span>
+        </td>
         <td>{{ p.last_calibration.strftime('%d/%m/%Y') }}</td>
         <td>{{ p.next_calibration.strftime('%d/%m/%Y') }}</td>
         <td>
