@@ -38,8 +38,8 @@ class Product(db.Model):
             return "danger"      # dépassé
         if d <= 7:
             return "danger"
-        if d <= 30:
-            return "warning"
+        if d <= 45:
+            return "warning"     # orange à partir de 45 jours
         return "success"
 
 
